@@ -1,0 +1,209 @@
+/* =============================================
+   roadmap.css — Roadmap de Carreira
+   Identidade Visual: Ápice 2026
+============================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0a0a0f;
+  --bg-2: #0f0f17;
+  --bg-3: #16161f;
+  --border: #1e1e2e;
+  --border-lite: #2a2a3d;
+  --text: #e8e8f0;
+  --muted: #6b6b8a;
+  --accent: #7C3AED;
+  --accent-hv: #9461f7;
+  --accent-dim: rgba(124,58,237,.13);
+  --accent-border: rgba(124,58,237,.30);
+  --teal: #10B691;
+  --teal-hv: #0ed4a8;
+  --teal-dim: rgba(16,182,145,.12);
+  --teal-border: rgba(16,182,145,.28);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96,165,250,.12);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,.10);
+  --yellow: #fbbf24;
+  --yellow-dim: rgba(251,191,36,.12);
+  --purple: #c084fc;
+  --purple-dim: rgba(192,132,252,.12);
+  --radius-sm: 5px;
+  --radius-md: 9px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --font-display: 'Montserrat', sans-serif;
+  --font-body: 'DM Mono', monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: .92rem;
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: .30;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 540px;
+  background: radial-gradient(ellipse, rgba(124,58,237,.10) 0%, transparent 62%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Header ── */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 58px;
+  background: rgba(10,10,15,.90);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  border-radius: var(--radius-sm);
+  font-size: .8rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all .15s;
+  text-decoration: none;
+}
+
+.nav-btn:hover {
+  color: var(--text);
+  background: var(--bg-3);
+  border-color: var(--border-lite);
+}
+
+.nav-btn.danger:hover {
+  color: var(--red);
+  background: var(--red-dim);
+  border-color: rgba(248,113,113,.2);
+}
+
+/* ── Layout ── */
+.page-wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* ── Loading ── */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 14px;
+  color: var(--muted);
+  font-size: .88rem;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--border-lite);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Hero do roadmap ── */
+.roadmap-hero {
+  background: rgba(15,15,23,.90);
+  border: 1px solid var(--border-lite);
+  border-radius: var(--radius-xl);
+  padding: 30px 34px;
+  margin-bottom: 30px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.02), 0 14px 44px rgba(0,0,0,.38);
+  animation: fadeUp .4s ease both;
+  position: relative;
+}
+
+/* Linha de accent top esquerdo */
+.roadmap-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 32px;
+  width: 48px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--teal));
+  border-radius: 0 0 2px 2px;
+}

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Seu roadmap de carreira personalizado — Dev Estágios." />
+  <title>Dev Estágios — Roadmap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/roadmap.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="logo" aria-label="Dev Estágios — início">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Dev Estágios
+    </a>
+    <nav class="header-nav">
+      <a href="/dashboard" class="nav-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="/auth/logout" class="nav-btn danger">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sair
+      </a>
+    </nav>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="loading-screen" id="loading" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Gerando seu roadmap...</p>
+    </div>
+
+    <div id="content" hidden>
+      <section class="roadmap-hero" id="roadmap-hero" aria-label="Resumo do roadmap"></section>
+
+      <section class="section" id="sec-known" hidden>
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Você já domina
+            <span class="section-count" id="known-count"></span>
+          </h2>
+        </div>
+        <div class="skills-known" id="known-list"></div>
+      </section>
+
+      <section class="section" id="sec-learn" hidden>
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Trilha de aprendizado
+            <span class="section-count" id="learn-count"></span>
+          </h2>
+        </div>
+        <div class="learn-list" id="learn-list" role="list"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Dev Estágios. Todos os direitos reservados.</p>
+  </footer>
+
+  <script>
+    // ── Biblioteca de ícones ──────────────────────────────
+    const IC = {
+      zap:        `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+      arrowLeft:  `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
+      building:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>`,
+      check:      `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>`,
+      checkCircle:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+      monitor:    `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+      users:      `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+      book:       `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+      bookOpen:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+      playCircle: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>`,
+      fileText:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+      tool:       `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+      graduationCap:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
+      rotateCCW:  `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.91"/></svg>`,
+      alert:      `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+      chevronDown:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>`,
+      externalLink:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
+    };
+
+    const RESOURCE_ICONS  = { curso: IC.graduationCap, video: IC.playCircle, documentacao: IC.fileText, projeto: IC.tool };
+    const RESOURCE_LABEL  = { curso: "Curso", video: "Vídeo", documentacao: "Documentação", projeto: "Projeto prático" };
+    const TYPE_CLASS       = { curso: "rtype-curso", video: "rtype-video", documentacao: "rtype-documentacao", projeto: "rtype-projeto" };
+
+    let jobId = null, roadmap = null;
+
+    function getJobId() { return new URLSearchParams(window.location.search).get("job"); }
+
+    function setCircle(pct) {
+      const fg = document.querySelector(".circle-fg");
+      if (!fg) return;
+      const offset = 251.2 - (pct / 100) * 251.2;
+      fg.style.stroke = pct >= 70 ? "var(--accent)" : pct >= 40 ? "var(--yellow)" : "var(--border-lite)";
+      requestAnimationFrame(() => { fg.style.strokeDashoffset = offset; });
+    }
+
+    function setProgressBar(concluded, total) {
+      const pct = total > 0 ? Math.round((concluded / total) * 100) : 0;
+      document.getElementById("prog-fill").style.width = pct + "%";
+      document.getElementById("prog-pct").textContent  = pct + "%";
+    }
+
+    // ── Hero ──────────────────────────────────────────────
+    function renderHero(data, jobMeta) {
+      const pct = data.matchPercent;
+      const levelClass = `level-${jobMeta?.level ?? "estagio"}`;
+      const levelLabel = { estagio:"Estágio", junior:"Júnior", pleno:"Pleno" }[jobMeta?.level] ?? "Estágio";
+      const concluded  = data.needsToLearn.filter(s => s.status === "concluido").length;
+      const inProgress = data.needsToLearn.filter(s => s.status === "em_progresso").length;
+
+      document.getElementById("roadmap-hero").innerHTML = `
+        <div class="hero-top">
+          <div class="hero-info">
+            <button class="hero-back" onclick="history.back()" aria-label="Voltar">
+              ${IC.arrowLeft} Voltar
+            </button>
+            <div class="hero-level ${levelClass}">${levelLabel}</div>
+            <h1 class="hero-title">${jobMeta?.title ?? "Roadmap de Carreira"}</h1>
+            <p class="hero-company">
+              ${IC.building} ${jobMeta?.company ?? ""}
+              ${data.readyFor ? `&nbsp;&middot;&nbsp;<span style="color:var(--accent);font-weight:600;display:inline-flex;align-items:center;gap:4px">${IC.checkCircle} Você está pronto para esta vaga!</span>` : ""}
+            </p>
+          </div>
+          <div class="match-circle-wrap" aria-label="Match de ${pct}%">
+            <div class="match-circle">
+              <svg viewBox="0 0 90 90" aria-hidden="true">
+                <circle class="circle-bg" cx="45" cy="45" r="40"/>
+                <circle class="circle-fg" cx="45" cy="45" r="40"/>
+              </svg>
+              <div class="circle-text">
+                <span class="circle-pct" id="circle-pct">${pct}%</span>
+                <span class="circle-sub">match</span>
+              </div>
+            </div>
+            <p class="match-label">Compatibilidade</p>
+          </div>
+        </div>
+
+        <div class="hero-progress">
+          <div class="progress-bar-wrap">
+            <div class="progress-label">
+              <span>Progresso na trilha</span>
+              <span id="prog-pct">0%</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="prog-fill" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="hero-stats" role="list">
+            <div class="hstat" role="listitem">
+              <div class="hstat-val" style="color:var(--accent)">${data.knownCount}</div>
+              <div class="hstat-lbl">Já domina</div>
+            </div>
+            <div class="hstat" role="listitem">
+              <div class="hstat-val" style="color:var(--yellow)" id="stat-prog">${inProgress}</div>
+              <div class="hstat-lbl">Estudando</div>
+            </div>
+            <div class="hstat" role="listitem">
+              <div class="hstat-val" id="stat-done">${concluded}</div>
+              <div class="hstat-lbl">Concluídas</div>
+            </div>
+            <div class="hstat" role="listitem">
+              <div class="hstat-val">${data.totalSkills}</div>
+              <div class="hstat-lbl">Total</div>
+            </div>
+          </div>
+        </div>`;
+
+      setTimeout(() => setCircle(pct), 80);
+      setTimeout(() => setProgressBar(concluded, data.needsToLearn.length), 100);
+    }
+
+    // ── Skills que já tem ─────────────────────────────────
+    function renderKnown(skills) {
+      if (!skills.length) return;
+      document.getElementById("sec-known").hidden = false;
+      document.getElementById("known-count").textContent = `(${skills.length})`;
+
+      document.getElementById("known-list").innerHTML = skills.map(s => {
+        const isSoft = s.skill_type === "soft";
+        return `
+          <span class="skill-chip ${isSoft ? "chip-type-soft" : ""}"
+                aria-label="${s.skill_name} — confiança ${s.confidence}%">
+            ${isSoft ? IC.users : IC.monitor}
+            ${s.skill_name}
+            <span class="chip-badge">${s.confidence}%</span>
+          </span>`;
+      }).join("");
+    }
+
+    // ── Trilha ────────────────────────────────────────────
+    function renderLearn(skills) {
+      if (!skills.length) return;
+      document.getElementById("sec-learn").hidden = false;
+      document.getElementById("learn-count").textContent = `(${skills.length})`;
+
+      document.getElementById("learn-list").innerHTML = skills.map((skill, i) => {
+        const isSoft = skill.skill_type === "soft";
+        const status = skill.status ?? "nao_iniciado";
+
+        const resourcesHtml = skill.resources?.length
+          ? skill.resources.map(r => `
+              <a class="resource-item"
+                 ${r.url ? `href="${r.url}" target="_blank" rel="noopener"` : ""}
+                 aria-label="${r.title}">
+                <span class="resource-icon">${RESOURCE_ICONS[r.type] ?? IC.fileText}</span>
+                <span class="resource-info">
+                  <span class="resource-name">${r.title}</span>
+                  <span class="resource-meta">
+                    <span class="resource-type ${TYPE_CLASS[r.type] ?? ""}">${RESOURCE_LABEL[r.type] ?? r.type}</span>
+                    ${r.is_free ? `<span class="resource-free">Gratuito</span>` : ""}
+                    ${r.duration ? `<span class="resource-duration">${r.duration}</span>` : ""}
+                  </span>
+                </span>
+                ${r.url ? `<span class="resource-arrow">${IC.externalLink}</span>` : ""}
+              </a>`).join("")
+          : `<p class="no-resources">Nenhum recurso cadastrado ainda.</p>`;
+
+        const controls = buildControls(skill.skill_id, status);
+        const impClass = `imp-${skill.importance}`;
+        const impLabel = skill.importance === "obrigatoria" ? "Obrigatória" : "Desejável";
+
+        return `
+          <article class="skill-card status-${status}" id="card-${skill.skill_id}" role="listitem">
+            <div class="skill-card-header" onclick="toggleCard(${skill.skill_id})"
+                 role="button" tabindex="0" aria-expanded="false" id="hdr-${skill.skill_id}"
+                 onkeydown="if(event.key==='Enter'||event.key===' ')toggleCard(${skill.skill_id})">
+              <div class="skill-order" aria-label="Ordem ${i + 1}">${i + 1}</div>
+              <div class="skill-card-info">
+                <div class="skill-name-row">
+                  <span class="skill-name">${isSoft ? IC.users : IC.monitor} ${skill.skill_name}</span>
+                  <span class="importance-badge ${impClass}">${impLabel}</span>
+                </div>
+                <div class="skill-type-label">${isSoft ? "Soft skill" : "Hard skill"}</div>
+              </div>
+              <div class="skill-controls" onclick="event.stopPropagation()">${controls}</div>
+              <span class="skill-chevron">${IC.chevronDown}</span>
+            </div>
+            <div class="skill-body" id="body-${skill.skill_id}" role="region" aria-labelledby="hdr-${skill.skill_id}">
+              <p class="resources-title">Recursos de aprendizado</p>
+              <div class="resources-list">${resourcesHtml}</div>
+            </div>
+          </article>`;
+      }).join("");
+    }
+
+    function buildControls(skillId, status) {
+      if (status === "nao_iniciado") return `
+        <button class="status-btn btn-progresso" onclick="updateStatus(event,${skillId},'em_progresso')">${IC.book} Estudando</button>
+        <button class="status-btn btn-concluido"  onclick="updateStatus(event,${skillId},'concluido')">${IC.check} Concluído</button>`;
+      if (status === "em_progresso") return `
+        <button class="status-btn btn-concluido" onclick="updateStatus(event,${skillId},'concluido')">${IC.check} Concluído</button>
+        <button class="status-btn btn-desfazer"  onclick="updateStatus(event,${skillId},'nao_iniciado')">${IC.rotateCCW} Desfazer</button>`;
+      return `<button class="status-btn btn-desfazer" onclick="updateStatus(event,${skillId},'nao_iniciado')">${IC.rotateCCW} Desfazer</button>`;
+    }
+
+    function toggleCard(skillId) {
+      const card = document.getElementById(`card-${skillId}`);
+      const hdr  = document.getElementById(`hdr-${skillId}`);
+      const open = card.classList.toggle("open");
+      hdr.setAttribute("aria-expanded", open);
+    }
+
+    async function updateStatus(e, skillId, newStatus) {
+      e.stopPropagation();
+      try {
+        const res = await fetch(`/api/roadmap/${jobId}/skill/${skillId}`, {
+          method: "PATCH", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+
+        document.getElementById("circle-pct").textContent = data.newMatch + "%";
+        setCircle(data.newMatch);
+
+        const skill = roadmap.needsToLearn.find(s => s.skill_id === skillId);
+        if (skill) {
+          skill.status = newStatus;
+          const card = document.getElementById(`card-${skillId}`);
+          card.className = card.className.replace(/status-\S+/, `status-${newStatus}`);
+          card.querySelector(".skill-controls").innerHTML = buildControls(skillId, newStatus);
+        }
+
+        const concluded  = roadmap.needsToLearn.filter(s => s.status === "concluido").length;
+        const inProgress = roadmap.needsToLearn.filter(s => s.status === "em_progresso").length;
+        document.getElementById("stat-done").textContent = concluded;
+        document.getElementById("stat-prog").textContent = inProgress;
+        setProgressBar(concluded, roadmap.needsToLearn.length);
+
+        const msgs = { nao_iniciado:"Status resetado", em_progresso:"Marcado como Estudando", concluido:"Skill concluída!" };
+        showToast(msgs[newStatus] ?? "Atualizado");
+      } catch {
+        showToast("Erro ao salvar. Tente novamente.", true);
+      }
+    }
+
+    let toastTimer = null;
+    function showToast(msg, isErr = false) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.style.borderColor = isErr ? "rgba(248,81,73,.3)" : "var(--border-lite)";
+      el.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove("show"), 2800);
+    }
+
+    async function init() {
+      jobId = getJobId();
+      if (!jobId) { window.location.href = "/dashboard"; return; }
+
+      try {
+        const userRes = await fetch("/api/user");
+        if (!userRes.ok) { window.location.href = "/login"; return; }
+
+        const [rmRes, jobsRes] = await Promise.all([
+          fetch(`/api/roadmap/${jobId}`),
+          fetch("/api/jobs"),
+        ]);
+        if (!rmRes.ok) throw new Error("Roadmap não encontrado");
+
+        roadmap       = await rmRes.json();
+        const jobs    = jobsRes.ok ? await jobsRes.json() : [];
+        const jobMeta = jobs.find(j => String(j.id) === String(jobId)) ?? null;
+
+        if (jobMeta?.title) document.title = `Dev Estágios — ${jobMeta.title}`;
+
+        renderHero(roadmap, jobMeta);
+        renderKnown(roadmap.alreadyKnows ?? []);
+        renderLearn(roadmap.needsToLearn ?? []);
+
+        document.getElementById("loading").hidden = true;
+        document.getElementById("content").hidden = false;
+      } catch (err) {
+        console.error(err);
+        document.getElementById("loading").innerHTML = `
+          <div style="text-align:center">
+            <div style="margin-bottom:12px;color:var(--red)">${IC.alert}</div>
+            <p style="color:var(--red);margin-bottom:12px">Erro ao carregar o roadmap.</p>
+            <a href="/dashboard" style="color:var(--blue);font-size:.9rem">← Voltar ao Dashboard</a>
+          </div>`;
+      }
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
